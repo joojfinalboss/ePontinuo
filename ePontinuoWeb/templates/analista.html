@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+          
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+        
+        
+        
+        <title>ePontinuo não acordou feliz</title>
+    </head>
+    <body>
+
+
+
+    
+        <div class="container-fluid p-2 bg-primary text-white text-center">
+            <h1>PÁGINA DOS CRIAAAAAA</h1>
+        </div>
+        
+        <div class="image-post">
+            <img class="image" style="margin: auto; display: flex; justify-content: center" src="{{request.user.perfil.imgURL}}">
+        </div>
+
+        <div class="container mt-5">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th>ID Analista</th>
+                        <th>Calls</th>
+                        <th>Tasks</th>
+                        <th>Imp Um</th>
+                        <th>Imp Dois</th>
+                        <th>Imp Três</th>
+                        <th>Imp Quatro</th>
+                        <th>Imp Adicional</th>
+                        <th>Imp Gestão</th>
+                        <th>Imp Komunic</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ request.user.username }}</td>
+                        <td>{{ request.user.perfil.idAnalista }}</td>
+                        <td>{{ calls }}</td>
+                        <td>{{ tasks }}</td>
+                        <td>{{ impUm }}</td>
+                        <td>{{ impDois }}</td>
+                        <td>{{ impTres }}</td>
+                        <td>{{ impQuatro }}</td>
+                        <td>{{ impAdc }}</td>
+                        <td>{{ impGestao }}</td>
+                        <td>{{ impKomunic }}</td>
+                    </tr>
+                </tbody>
+            </table>
+       </div>
+            <div class="container mt-5">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Acompanhamentos</th>
+                            <th>Loja Apple</th>
+                            <th>Reagendamentos</th>
+                            <th>Chats</th>
+                            <th>Pos-Vendas</th>
+                            <th>Komunic</th>
+                            <th>PONTUAÇÃO TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ acompanhamento }}</td>
+                            <td>{{ lojaApple }}</td>
+                            <td>{{ reagendado }}</td>
+                            <td>{{ chat }}</td>
+                            <td>{{ posVenda }}</td>
+                            <td>{{ komunic }}</td>
+                            <td id="pontuacao"></td>
+
+                        </tr>
+                    </tbody>
+                </table>
+    </div>
+    <div>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="'btn btn-success">ATUALIZAR</button>
+    </form>
+
+    <script>
+
+    </script>
+
+    <script>
+
+        var pontuacaoTotal = (
+            ({{tasks}} * 25) + ({{calls}} * 5) + ({{impUm}} * 60) + ({{impDois}} * 60) + 
+            ({{impTres}} * 60) + ({{impQuatro}} * 60) + ({{impGestao}} * 60) +
+            ({{impAdc}} * 45) + ({{impKomunic}} * 50) + ({{acompanhamento}} * 5) + ({{reagendado}} * 5) +
+            ({{chat}} * 5) + ({{posVenda}} * 30) + ({{lojaApple}} * 30) + ({{komunic}} * 5)
+        )
+
+        document.getElementById('pontuacao').innerText = pontuacaoTotal
+
+    </script>
+
+    </body>
+</html>
