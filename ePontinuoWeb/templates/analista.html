@@ -1,3 +1,5 @@
+{ % load static % }
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -13,8 +15,13 @@
         <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+        <!-- FEATURE FLAG: CONTINUAR A CORRIGIR CSS PARA PUXAR DO STATIC, AINDA NAO TEM RESOLUÇÃO, ALTERADO TESTE.CSS E PASTA STATIC-->
+        <!-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" /> -->
+        <link rel="stylesheet" href="../static/css/teste.css">
         
+
         
         
         <title>ePontinuo não acordou feliz</title>
@@ -32,6 +39,8 @@
             <img class="image" style="margin: auto; display: flex; justify-content: center" src="{{request.user.perfil.imgURL}}">
         </div>
 
+
+        <p class="teste">TESTE</p>
         <div class="container mt-5">
             <table class="table">
                 <thead>
@@ -95,11 +104,13 @@
     </div>
     <div>
 
+    <div> 
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <button class="'btn btn-success">ATUALIZAR</button>
     </form>
+    </div>
 
     <script>
 
