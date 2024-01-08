@@ -29,7 +29,7 @@ def usuario_login(request):
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)    
-                return redirect('paginainicial')
+                return redirect('main')
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
@@ -39,6 +39,9 @@ def usuario_logout(request):
     logout(request)
     return redirect('login')
 
+
+
+# Página Main
 
 def usuario_analista(request):
 
@@ -59,8 +62,10 @@ def usuario_analista(request):
     respostaUm = response.json()
     resposta = respostaUm['data']
 
-    listaTiposAtividades = [ atividade['type'] for atividade in resposta ]
-
+    try:
+        listaTiposAtividades = [ atividade['type'] for atividade in resposta ]
+    except:
+        listaTiposAtividades = []
 
     quantasTasks = 0
     quantasCalls = 0
@@ -80,7 +85,9 @@ def usuario_analista(request):
 
 
     for tipoAtividade in listaTiposAtividades:
-        if tipoAtividade == 'task':
+        if tipoAtividade == None:
+            pass
+        elif tipoAtividade == 'task':
             quantasTasks = quantasTasks + 1
         elif tipoAtividade == 'call':
             quantasCalls = quantasCalls + 1
