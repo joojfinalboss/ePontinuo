@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout 
 import requests
 from .forms import UserCreationForm, LoginForm, DemoForm
-
+from .models import Perfil
 # Create your views here.
 
 def index(request):
@@ -49,13 +49,16 @@ def usuario_analista(request):
         form = DemoForm(request.POST)
         if form.is_valid():
             dataPrazo = form.cleaned_data['date_range_normal']
+            request.user.perfil.dataStart = dataPrazo[0]
+            request.user.perfil.dataEnd = dataPrazo[1]
+            
     else:
         dataPrazo = [request.user.perfil.dataStart, request.user.perfil.dataEnd]
 
 
     idAnalista = request.user.perfil.idAnalista
 
-    form = DemoForm()
+    form = DemoForm(initial={"date_range_normal" : dataPrazo})
 
     url = "https://api.pipedrive.com/v1/activities?limit=500000000&done=1&user_id={0}&start_date={1}&end_date={2}&api_token=d0f27a8c3a00dbd3bab46ead2a6d3bfc7fec6aa7".format(idAnalista, dataPrazo[0], dataPrazo[1])
     response = requests.get(url)
