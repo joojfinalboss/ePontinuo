@@ -55,18 +55,19 @@ def usuario_analista(request):
         form = DemoForm(request.POST)
         if form.is_valid():
             dataPrazo = form.cleaned_data['Selecione_a_Data_para_Filtrar']
-            print(type(dataPrazo[0]))
             request.user.perfil.dataStart = dataPrazo[0]
             request.user.perfil.dataEnd = (dataPrazo[1] + datetime.timedelta(days=1))
-            print(request.user.perfil.dataEnd)
+            dataPrazo = [request.user.perfil.dataStart, request.user.perfil.dataEnd]
             
     else:
         dataPrazo = [request.user.perfil.dataStart, request.user.perfil.dataEnd]
-        print(dataPrazo)
+        print(request.user.perfil.dataEnd)
+
 
 
     # Calculate the number of days between the dates in dataPrazo
 
+    print(dataPrazo)
     idAnalista = request.user.perfil.idAnalista
     form = DemoForm(initial={"date_range_normal" : dataPrazo})
     listaTiposAtividades = []
@@ -110,7 +111,6 @@ def usuario_analista(request):
             url = "https://api.pipedrive.com/v1/activities?limit=500000000&done=1&user_id={0}&start_date={1}&end_date={2}&api_token=d0f27a8c3a00dbd3bab46ead2a6d3bfc7fec6aa7".format(idAnalista, start_date, end_date)
             response = requests.get(url)
             resposta = response.json()['data']
-            print('caiu errado')
 
 
             # Count the activities for this response
@@ -122,19 +122,14 @@ def usuario_analista(request):
             for tipoAtividade in listaTiposAtividades:
                 if tipoAtividade in quantiaAtividades:
                     quantiaAtividades[tipoAtividade] += 1
-                if tipoAtividade == 'imp_acessorias_etapa_iv':
-                    print('tem que ter 8 desgraças')
-            print(quantiaAtividades)
     else:
         # Convert the dates to strings in the format 'YYYY-MM-DD'
         start_date_str = dataPrazo[0].strftime('%Y-%m-%d')
         end_date_str = dataPrazo[1].strftime('%Y-%m-%d')
-        print(start_date_str, end_date_str)
 
         url = "https://api.pipedrive.com/v1/activities?limit=500000000&done=1&user_id={0}&start_date={1}&end_date={2}&api_token=d0f27a8c3a00dbd3bab46ead2a6d3bfc7fec6aa7".format(idAnalista, start_date_str, end_date_str)
         response = requests.get(url)
         resposta = response.json()['data']
-        print(resposta)
 
         # Count the activities for this response
         if resposta is not None:

@@ -85,6 +85,7 @@
                             <th>Chats</th>
                             <th>Pos-Vendas</th>
                             <th>Komunic</th>
+                            <th>Chamados</th>
                             <th>PONTUAÇÃO TOTAL</th>
                         </tr>
                     </thead>
@@ -96,6 +97,7 @@
                             <td>{{ chat }}</td>
                             <td>{{ posVenda }}</td>
                             <td>{{ komunic }}</td>
+                            <td id="pontuacaoChamados"></td>
                             <td id="pontuacao"></td>
 
                         </tr>
@@ -132,7 +134,7 @@
 
         function inserirPontuacaoChamado() {
             var pontuacao = pontuacaoTotal + (document.getElementById('pontuacaoChamado').value * 10 )
-
+            document.getElementById('pontuacaoChamados').innerText = document.getElementById('pontuacaoChamado').value
             document.getElementById('pontuacao').innerText = pontuacao
         }
 

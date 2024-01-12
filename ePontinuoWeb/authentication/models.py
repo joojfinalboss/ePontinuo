@@ -8,7 +8,7 @@ class Perfil(models.Model):
     idAnalista = models.CharField(max_length=15, blank=True)
     dataStart = models.DateField(null=True, default=None)
     dataEnd = models.DateField(null=True, default=None)
-    imgURL = models.TextField(null=True, default=None)
+    imgURL = models.TextField(null=True, default=None, blank=True)
 
 
 
