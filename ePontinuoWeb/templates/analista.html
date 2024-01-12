@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -16,7 +17,11 @@
 
 
         <!-- FEATURE FLAG: CONTINUAR A CORRIGIR CSS PARA PUXAR DO STATIC, AINDA NAO TEM RESOLUÇÃO, ALTERADO TESTE.CSS E PASTA STATIC-->
-        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />        
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />    
+        
+        {% load static %}
+
+        <link rel="stylesheet" href="{% static 'main.css' %}">
 
         
         
@@ -103,7 +108,10 @@
     <form method="POST"  class="container mt-12">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="'btn btn-success">ATUALIZAR</button>
+        <button class="btn btn-success" onclick="inserirPontuacaoChamado">ATUALIZAR</button>
+        <input type="number" id="pontuacaoChamado">
+        <button type="button" class="btn btn-secondary" onclick="inserirPontuacaoChamado()">Acrescentar Chamados</button>
+
     </form>
     </div>
 
@@ -121,6 +129,12 @@
         )
 
         document.getElementById('pontuacao').innerText = pontuacaoTotal
+
+        function inserirPontuacaoChamado() {
+            var pontuacao = pontuacaoTotal + (document.getElementById('pontuacaoChamado').value * 10 )
+
+            document.getElementById('pontuacao').innerText = pontuacao
+        }
 
     </script>
 

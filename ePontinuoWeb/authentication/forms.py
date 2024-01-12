@@ -14,7 +14,7 @@ class LoginForm(forms.Form):
 
 class DemoForm(forms.Form):
     # Date Range Fields
-    date_range_normal = fields.DateRangeField()
+    Selecione_a_Data_para_Filtrar = fields.DateRangeField()
 
 
 

@@ -1,9 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout 
 import requests
+import datetime
+from datetime import timedelta
 from .forms import UserCreationForm, LoginForm, DemoForm
 from .models import Perfil
 # Create your views here.
+
+
+
+
 
 def index(request):
     return render(request, 'index.html')
@@ -48,88 +54,125 @@ def usuario_analista(request):
     if request.method == "POST":
         form = DemoForm(request.POST)
         if form.is_valid():
-            dataPrazo = form.cleaned_data['date_range_normal']
+            dataPrazo = form.cleaned_data['Selecione_a_Data_para_Filtrar']
+            print(type(dataPrazo[0]))
             request.user.perfil.dataStart = dataPrazo[0]
-            request.user.perfil.dataEnd = dataPrazo[1]
+            request.user.perfil.dataEnd = (dataPrazo[1] + datetime.timedelta(days=1))
+            print(request.user.perfil.dataEnd)
             
     else:
         dataPrazo = [request.user.perfil.dataStart, request.user.perfil.dataEnd]
+        print(dataPrazo)
 
+
+    # Calculate the number of days between the dates in dataPrazo
 
     idAnalista = request.user.perfil.idAnalista
-
     form = DemoForm(initial={"date_range_normal" : dataPrazo})
+    listaTiposAtividades = []
+    quantiaAtividades = {
+        'task': 0,
+        'call': 0,
+        'imp_acessorias_etapa_i': 0,
+        'imp_etapa_ii': 0,
+        'imp_acessorias_etapa_iii': 0,
+        'imp_acessorias_etapa_iv': 0,
+        'treinamento_adicional': 0,
+        'acompanhamento_': 0,
+        'loja_apple_': 0,
+        'reagendar': 0,
+        'imp_etapa_iii': 0,
+        'chat': 0,
+        'ps_venda': 0,
+        'komunic': 0,
+        'imp_komunic_': 0
+    }
 
-    url = "https://api.pipedrive.com/v1/activities?limit=500000000&done=1&user_id={0}&start_date={1}&end_date={2}&api_token=d0f27a8c3a00dbd3bab46ead2a6d3bfc7fec6aa7".format(idAnalista, dataPrazo[0], dataPrazo[1])
-    response = requests.get(url)
-    respostaUm = response.json()
-    resposta = respostaUm['data']
+    difference = (dataPrazo[1] - dataPrazo[0]).days
 
-    try:
-        listaTiposAtividades = [ atividade['type'] for atividade in resposta ]
-    except:
-        listaTiposAtividades = []
+    # If the date range is more than 14 days
+    if difference > 14:
+        # Calculate the number of periods
+        num_periods = difference // 7
 
-    quantasTasks = 0
-    quantasCalls = 0
-    quantasImpUm = 0
-    quantasImpDois = 0
-    quantasImpTres = 0
-    quantasImpQuatro = 0
-    quantasImpAdicional = 0
-    quantasAcompanhamento = 0
-    quantasLojaApple = 0
-    quantasReagendado = 0
-    quantasGestao = 0
-    quantasChat = 0
-    quantasPos = 0
-    quantasKomunic = 0
-    quantasImpKomunic = 0
+        # Create the date ranges
+        date_ranges = [
+            (dataPrazo[0] + timedelta(days=i*7), dataPrazo[0] + timedelta(days=(i+1)*7)) for i in range(num_periods)
+        ]
+
+        # Add the remaining days to the last period
+        if difference % 7 != 0:
+            date_ranges[-1] = (date_ranges[-1][0], dataPrazo[1])
 
 
-    for tipoAtividade in listaTiposAtividades:
-        if tipoAtividade == None:
-            pass
-        elif tipoAtividade == 'task':
-            quantasTasks = quantasTasks + 1
-        elif tipoAtividade == 'call':
-            quantasCalls = quantasCalls + 1
-        elif tipoAtividade == 'imp_acessorias_etapa_i':
-            quantasImpUm = quantasImpUm + 1
-        elif tipoAtividade == 'imp_etapa_ii':
-            quantasImpDois = quantasImpDois + 1
-        elif tipoAtividade == 'imp_acessorias_etapa_iii':
-            quantasImpTres = quantasImpTres + 1
-        elif tipoAtividade == 'imp_acessorias_etapa_iv':
-            quantasImpQuatro = quantasImpQuatro + 1
-        elif tipoAtividade == 'treinamento_adicional':
-            quantasImpAdicional = quantasImpAdicional + 1
-        elif tipoAtividade == 'acompanhamento_':
-            quantasAcompanhamento = quantasAcompanhamento + 1
-        elif tipoAtividade == "loja_apple_":
-            quantasLojaApple = quantasLojaApple + 1
-        elif tipoAtividade == 'reagendar':
-            quantasReagendado = quantasReagendado + 1
-        elif tipoAtividade == 'imp_etapa_iii':
-            quantasGestao = quantasGestao + 1    
-        elif tipoAtividade == 'chat':
-            quantasChat = quantasChat + 1   
-        elif tipoAtividade == 'ps_venda':
-            quantasPos = quantasPos + 1 
-        elif tipoAtividade == 'komunic':
-            quantasKomunic = quantasKomunic + 1
-        elif tipoAtividade == 'imp_komunic_':
-            quantasImpKomunic = quantasImpKomunic + 1
+        # Make the API requests
+        for start_date, end_date in date_ranges:
+            url = "https://api.pipedrive.com/v1/activities?limit=500000000&done=1&user_id={0}&start_date={1}&end_date={2}&api_token=d0f27a8c3a00dbd3bab46ead2a6d3bfc7fec6aa7".format(idAnalista, start_date, end_date)
+            response = requests.get(url)
+            resposta = response.json()['data']
+            print('caiu errado')
+
+
+            # Count the activities for this response
+            if resposta is not None:
+                listaTiposAtividades = [ atividade['type'] for atividade in resposta ]
+            else:
+                listaTiposAtividades = []
+
+            for tipoAtividade in listaTiposAtividades:
+                if tipoAtividade in quantiaAtividades:
+                    quantiaAtividades[tipoAtividade] += 1
+                if tipoAtividade == 'imp_acessorias_etapa_iv':
+                    print('tem que ter 8 desgraças')
+            print(quantiaAtividades)
+    else:
+        # Convert the dates to strings in the format 'YYYY-MM-DD'
+        start_date_str = dataPrazo[0].strftime('%Y-%m-%d')
+        end_date_str = dataPrazo[1].strftime('%Y-%m-%d')
+        print(start_date_str, end_date_str)
+
+        url = "https://api.pipedrive.com/v1/activities?limit=500000000&done=1&user_id={0}&start_date={1}&end_date={2}&api_token=d0f27a8c3a00dbd3bab46ead2a6d3bfc7fec6aa7".format(idAnalista, start_date_str, end_date_str)
+        response = requests.get(url)
+        resposta = response.json()['data']
+        print(resposta)
+
+        # Count the activities for this response
+        if resposta is not None:
+            listaTiposAtividades = [ atividade['type'] for atividade in resposta ]
         else:
-            pass
+            listaTiposAtividades = []
+
+        for tipoAtividade in listaTiposAtividades:
+            if tipoAtividade in quantiaAtividades:
+                quantiaAtividades[tipoAtividade] += 1
 
 
-    context = {'tasks' : quantasTasks, 'calls' : quantasCalls, 'impUm' : quantasImpUm, 'impDois' : quantasImpDois, 'impTres' : quantasImpTres, 
-               'impQuatro' : quantasImpQuatro, 'impAdc' : quantasImpAdicional, 'acompanhamento' : quantasAcompanhamento, 'lojaApple' : quantasLojaApple, 
-               'reagendado' : quantasReagendado, 'impGestao' : quantasGestao, 'chat' : quantasChat, 'posVenda' : quantasPos, 'komunic' : quantasKomunic,
-               'impKomunic' : quantasImpKomunic,'form' : form}
+
+
+    context = {
+        'tasks': quantiaAtividades['task'],
+        'calls': quantiaAtividades['call'],
+        'impUm': quantiaAtividades['imp_acessorias_etapa_i'],
+        'impDois': quantiaAtividades['imp_etapa_ii'],
+        'impTres': quantiaAtividades['imp_acessorias_etapa_iii'],
+        'impQuatro': quantiaAtividades['imp_acessorias_etapa_iv'],
+        'impAdc': quantiaAtividades['treinamento_adicional'],
+        'acompanhamento': quantiaAtividades['acompanhamento_'],
+        'lojaApple': quantiaAtividades['loja_apple_'],
+        'reagendado': quantiaAtividades['reagendar'],
+        'impGestao': quantiaAtividades['imp_etapa_iii'],
+        'chat': quantiaAtividades['chat'],
+        'posVenda': quantiaAtividades['ps_venda'],
+        'komunic': quantiaAtividades['komunic'],
+        'impKomunic': quantiaAtividades['imp_komunic_'],
+        'form': form
+    }
 
 
 
     return render(request, 'analista.html', context=context)
+
+
+
+
 
