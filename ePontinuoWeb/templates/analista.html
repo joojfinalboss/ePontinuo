@@ -30,17 +30,18 @@
     <body>
 
 
-
-    
+        <!-- CABEÇALHO AZUL FODIDO N MEXE -->
         <div class="container-fluid p-2 bg-primary text-white text-center">
             <h1>vê a pagina dos cria baixo</h1>
         </div>
-        
+
+        <!-- ESSE É O CONTAINER COM A IMAGEM DE PERFIL, PRECISA REDIMENSIONAR PRA PADRONIZAR O TAMANHO DE IMAGEM-->
         <div class="image-post">
             <img class="image" style="margin: auto; display: flex; justify-content: center" src="{{request.user.perfil.imgURL}}">
         </div>
 
         
+        <!-- ABAIXO É AS COLUNAS COM QUANTIA DE ATIVIDADES E OUTRAS INFO, ETC... TÁ DIVIDIDO UMA LINHA POR DIV.-->
         <div class="container mt-5">
             <table class="table">
                 <thead>
@@ -106,6 +107,8 @@
     </div>
     <div>
 
+    <!-- ESSE ABAIXO É OS BOTÕES DO CALENDÁRIO, "ATUALIZAR", COLOCAR NÚMERO DE CHAMADO E "ACRESCENTAR CHAMADOS"-->
+
     <div> 
     <form method="POST"  class="container mt-12">
         {% csrf_token %}
@@ -117,6 +120,8 @@
     </form>
     </div>
 
+
+    <!-- NÃO MEXER ABAIXO DAQUI MULA -->
     <script>
 
     </script>
@@ -127,7 +132,7 @@
             ({{tasks}} * 25) + ({{calls}} * 5) + ({{impUm}} * 60) + ({{impDois}} * 60) + 
             ({{impTres}} * 60) + ({{impQuatro}} * 60) + ({{impGestao}} * 60) +
             ({{impAdc}} * 45) + ({{impKomunic}} * 50) + ({{acompanhamento}} * 5) + ({{reagendado}} * 5) +
-            ({{chat}} * 5) + ({{posVenda}} * 30) + ({{lojaApple}} * 30) + ({{komunic}} * 5)
+            ({{chat}} * 15) + ({{posVenda}} * 30) + ({{lojaApple}} * 30) + ({{komunic}} * 5)
         )
 
         document.getElementById('pontuacao').innerText = pontuacaoTotal
